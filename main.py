@@ -4,7 +4,8 @@ import os
 import sys
 import argparse
 from PyPDF2 import PdfReader, PdfWriter, Transformation
-from PyPDF2.generic import RectangleObject
+from PyPDF2.generic import RectangleObject, FloatObject
+from decimal import Decimal
 
 def add_margins(input_path, margin_top=72, margin_bottom=72):
     """
@@ -46,6 +47,16 @@ def add_margins(input_path, margin_top=72, margin_bottom=72):
         # Move content down to create top margin
         op = Transformation().translate(0, margin_bottom)
         page.add_transformation(op)
+
+        # Adjust annotations
+        if "/Annots" in page:
+            for annot in page["/Annots"]:
+                annot_obj = annot.get_object()
+                if "/Rect" in annot_obj:
+                    rect = annot_obj["/Rect"]
+                    # Use FloatObject instead of float to maintain proper PDF type
+                    rect[1] = FloatObject(float(rect[1]) + margin_bottom)
+                    rect[3] = FloatObject(float(rect[3]) + margin_bottom)
 
         # Add the modified page to the output PDF
         writer.add_page(page)
