@@ -1,0 +1,9 @@
+[project]
+name = "pdf-page-widener"
+version = "0.1.0"
+description = "A tool to add top and bottom margins to PDF pages"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pypdf2>=3.0.0",
+]
